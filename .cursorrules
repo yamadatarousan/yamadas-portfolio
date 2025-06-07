@@ -1,0 +1,395 @@
+# パーソナルポートフォリオサイト - Cursor ルール
+
+## プロジェクト概要
+パーソナルポートフォリオサイト（ブログ機能付き）。Vercelにデプロイする前提。
+
+**コンセプト**: 自己紹介、スキルセット、GitHubの活動統計表示、自作のブログ機能（PostgreSQLで記事を管理）、制作物のギャラリー。
+
+**見栄えポイント**:
+- Next.js App Routerのレンダリング戦略の使い分け: 静的なページ（自己紹介、スキル）はSSG、ブログ記事一覧はISR、ブログ記事単体はSSG、コメント機能はSSR/CSRなど、適切なレンダリング方法を選択し、パフォーマンスを最大化する
+- リッチテキストエディタの実装: ブログ記事投稿画面でWYSIWYGエディタなどを導入
+- モダンなデザイン: Tailwind CSSを使いこなした、洗練されたデザイン
+- レスポンシブデザイン: モバイルファーストアプローチでの実装
+
+## 開発環境
+- **OS**: macOS
+- **Docker**: 不使用（Vercelデプロイのためシンプル構成）
+- **データベース**: PostgreSQL (NeonDB)
+- **デプロイ**: Vercel
+
+## 技術スタック
+
+### フロントエンド・バックエンド統合
+- **フレームワーク**: Next.js 14+ (App Router)
+- **言語**: TypeScript
+- **スタイリング**: Tailwind CSS
+- **UI コンポーネント**: Headless UI または Radix UI
+- **テスト**: Jest + React Testing Library
+- **リンター**: ESLint + Prettier
+- **型チェック**: TypeScript strict mode
+
+### データベース
+- **タイプ**: PostgreSQL
+- **ホスティング**: NeonDB
+- **ORM**: Prisma
+- **接続**: @neondatabase/serverless
+
+### 認証・セキュリティ
+- **認証**: NextAuth.js v5 (Auth.js)
+- **セッション管理**: JWT + Database sessions
+- **環境変数**: .env.local (開発) / Vercel Environment Variables (本番)
+
+### パフォーマンス・SEO
+- **画像最適化**: Next.js Image component
+- **フォント**: next/font (Google Fonts)
+- **SEO**: next-seo または built-in metadata API
+- **分析**: Vercel Analytics
+
+## ディレクトリ構造（Next.js App Router）
+```
+/Users/user/Development/yamadas-portfolio/
+├── app/                    # App Router pages
+│   ├── (auth)/            # Route groups
+│   ├── blog/              # Blog pages
+│   ├── projects/          # Projects showcase
+│   ├── about/             # About page
+│   ├── contact/           # Contact page
+│   ├── api/               # API routes
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # Reusable components
+│   ├── ui/               # Base UI components
+│   ├── layout/           # Layout components
+│   ├── blog/             # Blog-specific components
+│   └── projects/         # Project-specific components
+├── lib/                   # Utility functions
+│   ├── db.ts             # Database connection
+│   ├── auth.ts           # Authentication config
+│   ├── utils.ts          # General utilities
+│   └── validations.ts    # Zod schemas
+├── prisma/               # Database schema and migrations
+│   ├── schema.prisma     # Prisma schema
+│   └── migrations/       # Database migrations
+├── public/               # Static assets
+├── types/                # TypeScript type definitions
+├── __tests__/            # Test files
+├── .env.local           # Local environment variables
+├── .env.example         # Environment variables template
+├── next.config.js       # Next.js configuration
+├── tailwind.config.js   # Tailwind CSS configuration
+├── tsconfig.json        # TypeScript configuration
+├── package.json         # Dependencies
+└── README.md            # Project documentation
+```
+
+## 開発ガイドライン
+
+### コード品質・スタイル
+- **TypeScript**: strict mode有効、型安全性を最優先
+- **コンポーネント設計**: 単一責任原則、再利用性を重視
+- **スタイリング**: Tailwind CSS のユーティリティクラス優先
+- **命名規則**: 
+  - コンポーネント: PascalCase (例: `BlogCard.tsx`)
+  - 関数・変数: camelCase (例: `fetchBlogPosts`)
+  - ファイル: kebab-case または PascalCase
+- **インポート順序**: 外部ライブラリ → 内部モジュール → 相対パス
+
+### Next.js App Router ベストプラクティス
+- **サーバーコンポーネント**: デフォルトでサーバーコンポーネントを使用
+- **クライアントコンポーネント**: 'use client'は必要最小限で使用
+- **データフェッチング**: fetch API with caching strategies
+- **メタデータ**: generateMetadata関数でSEO最適化
+- **レイアウト**: 適切なレイアウト階層の設計
+- **ローディング**: loading.tsx, error.tsx の適切な配置
+
+### データベース設計（Prisma + NeonDB）
+- **スキーマ設計**: 正規化を適切に実施
+- **マイグレーション**: prisma migrate でバージョン管理
+- **型安全性**: Prisma Client の型定義活用
+- **パフォーマンス**: 適切なインデックス設計
+- **接続管理**: コネクションプーリングの活用
+
+### テスト戦略
+- **単体テスト**: Jest + React Testing Library
+- **統合テスト**: API routes の動作確認
+- **E2Eテスト**: Playwright（必要に応じて）
+- **テスト名**: すべて日本語で記述
+- **カバレッジ**: 重要なビジネスロジックを優先的にテスト
+
+## 機能要件
+
+### コア機能
+1. **ホームページ**
+   - ヒーローセクション
+   - スキル概要
+   - 最新ブログ記事
+   - 制作物ハイライト
+
+2. **自己紹介ページ**
+   - プロフィール
+   - 経歴・学歴
+   - 技術スタック
+   - 趣味・興味
+
+3. **ブログ機能**
+   - 記事一覧（タグ・カテゴリ別表示）
+   - 記事詳細（Markdown対応）
+   - 検索機能
+   - RSS feed
+   - 管理者機能（記事投稿・編集・削除）
+
+4. **プロジェクト紹介**
+   - プロジェクト一覧
+   - プロジェクト詳細
+   - GitHub連携
+   - 技術タグ
+
+5. **お問い合わせ**
+   - コンタクトフォーム
+   - SNSリンク
+   - 外部サービス連携（optional）
+
+### GitHub統計連携
+- **GitHub API**: 活動統計の表示
+- **リポジトリ情報**: ピン留めリポジトリの自動取得
+- **コミット履歴**: 活動ヒートマップ
+- **言語統計**: 使用言語の可視化
+
+## パフォーマンス・SEO要件
+
+### パフォーマンス最適化
+- **Core Web Vitals**: LCP, FID, CLS の最適化
+- **画像最適化**: Next.js Image component + WebP
+- **コード分割**: Dynamic imports の活用
+- **キャッシング**: ISR, SWR パターンの活用
+- **バンドルサイズ**: Tree shaking, 不要ライブラリの除去
+
+### SEO対策
+- **メタデータ**: 動的メタデータ生成
+- **構造化データ**: JSON-LD でのマークアップ
+- **サイトマップ**: 自動生成
+- **robots.txt**: 適切なクローラー制御
+- **Open Graph**: SNSシェア最適化
+
+## セキュリティ要件
+
+### 認証・認可
+- **管理者認証**: NextAuth.js でのセキュアな認証
+- **セッション管理**: JWTトークンの適切な管理
+- **CSRF対策**: Next.js built-in protection
+- **XSS対策**: サニタイゼーション実装
+
+### データ保護
+- **環境変数**: 機密情報の適切な管理
+- **データベース**: NeonDB のセキュリティ機能活用
+- **API保護**: Rate limiting, 入力値検証
+- **HTTPS**: Vercel での自動HTTPS
+
+## デプロイメント（Vercel）
+
+### 環境設定
+- **本番環境**: main ブランチの自動デプロイ
+- **プレビュー環境**: プルリクエストでの自動プレビュー
+- **環境変数**: Vercel dashboard での管理
+- **ドメイン**: カスタムドメインの設定
+
+### CI/CD パイプライン
+- **GitHub Actions**: テスト・リント・型チェック
+- **Vercel Build**: 自動ビルド・デプロイ
+- **データベース**: マイグレーションの自動実行
+- **監視**: Vercel Analytics での監視
+
+## 開発プロセス
+
+### Git フロー
+- **ブランチ戦略**: main (本番) + feature branches
+- **コミット規約**: Conventional Commits
+- **プルリクエスト**: 必須、自動テスト通過が条件
+- **コードレビュー**: 品質とセキュリティの確認
+
+### 品質保証
+- **ESLint**: コード品質の自動チェック
+- **Prettier**: コードフォーマットの統一
+- **TypeScript**: 型エラーゼロを維持
+- **テスト**: 新機能にはテストを必須
+
+## パッケージ管理
+
+### 推奨ライブラリ
+```json
+{
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "typescript": "^5.0.0",
+    "@prisma/client": "^5.0.0",
+    "next-auth": "^5.0.0",
+    "zod": "^3.0.0",
+    "tailwindcss": "^3.0.0",
+    "@headlessui/react": "^1.0.0",
+    "framer-motion": "^10.0.0",
+    "next-themes": "^0.3.0",
+    "react-hook-form": "^7.0.0",
+    "date-fns": "^2.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "@testing-library/react": "^14.0.0",
+    "prisma": "^5.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0"
+  }
+}
+```
+
+## 実用的テスト戦略
+
+### テストの優先順位
+1. **Critical Path**: 認証、データ取得、フォーム送信
+2. **Core Components**: 再利用可能なUIコンポーネント
+3. **Utility Functions**: データ変換、バリデーション
+4. **Integration**: API routes, データベース操作
+
+### テスト作成の基本原則
+- **実装理解を優先**: テスト作成前にコンポーネントの実装を完全理解
+- **段階的アプローチ**: 基本機能テスト → エッジケース → エラーハンドリング
+- **実用性重視**: 動作確認できる最小限のテストから開始
+- **Vercel Build最優先**: デプロイが通ることを最重要視
+
+## 環境構築
+
+### 開発環境セットアップ
+```bash
+# プロジェクト作成
+npx create-next-app@latest yamadas-portfolio --typescript --tailwind --eslint --app --src-dir=false --import-alias="@/*"
+
+# 依存関係インストール
+npm install prisma @prisma/client @neondatabase/serverless
+npm install next-auth zod react-hook-form @hookform/resolvers
+
+# 開発用依存関係
+npm install -D jest @testing-library/react @testing-library/jest-dom
+npm install -D prettier eslint-config-prettier
+
+# データベースセットアップ
+npx prisma init
+npx prisma db push
+npx prisma generate
+```
+
+### 環境変数（.env.local）
+```bash
+# NeonDB
+DATABASE_URL="postgresql://username:password@host/database?sslmode=require"
+
+# NextAuth.js
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+
+# GitHub API (Optional)
+GITHUB_TOKEN="your-github-token"
+
+# その他のAPI キー
+# RESEND_API_KEY="your-resend-api-key"
+```
+
+## AIアシスタントの行動原則
+
+### 開発時の重要事項
+1. **Next.js App Router**: 最新のパターンとベストプラクティスを適用
+2. **TypeScript**: 型安全性を最優先、any型の使用は最小限
+3. **Prisma**: データベース操作は必ずPrisma Clientを使用
+4. **Vercel最適化**: デプロイ時の最適化を常に考慮
+5. **レスポンシブ**: モバイルファーストアプローチでの実装
+
+### コード品質保証
+- 新機能実装時は必ずTypeScriptエラーゼロを確認
+- ESLintエラーは即座に修正
+- コンポーネントの再利用性を重視
+- パフォーマンスへの影響を事前評価
+
+### テスト・品質管理
+- Critical Pathの機能は必ずテストを作成
+- Vercel Buildの成功を最優先
+- セキュリティベストプラクティスの遵守
+- アクセシビリティへの配慮
+
+## プロジェクト固有の注意事項
+
+### ポートフォリオサイト特有の要件
+- **個人情報**: 適切なプライバシー配慮
+- **パフォーマンス**: 高速な表示速度でプロフェッショナル感を演出
+- **SEO**: 検索エンジンでの発見可能性向上
+- **アクセシビリティ**: 多様なユーザーへの配慮
+
+### 長期運用の考慮
+- **コンテンツ管理**: ブログ記事の効率的な管理システム
+- **スケーラビリティ**: アクセス増加への対応
+- **メンテナンス**: 定期的な依存関係更新
+- **バックアップ**: データの安全な保管
+
+## 成功指標
+
+### 技術指標
+- **TypeScriptエラー**: 0件
+- **ESLintエラー**: 0件  
+- **Core Web Vitals**: すべてGreen
+- **Vercel Build**: 100%成功
+- **テストカバレッジ**: Critical Path 100%
+
+### ユーザー体験指標
+- **ページ読み込み時間**: < 2秒
+- **モバイル対応**: 完全レスポンシブ
+- **SEOスコア**: Lighthouse 90+
+- **アクセシビリティ**: WCAG 2.1 AA準拠
+
+## 禁止事項
+
+### 絶対に避けるべき実装
+- any型の多用
+- クライアントサイドでの機密情報露出
+- 非効率なデータベースクエリ
+- アクセシビリティを無視したUI実装
+- セキュリティホールの放置
+
+### 開発プロセスでの禁止事項
+- TypeScriptエラーを残したままのコミット
+- テスト未実装での機能リリース
+- 環境変数の平文コミット
+- Vercel Build失敗の放置
+
+## 実践的チェックリスト
+
+### 新機能開発時
+- [ ] 要件の明確化と設計検討
+- [ ] TypeScript型定義の作成
+- [ ] コンポーネント実装
+- [ ] テストの作成と実行
+- [ ] ESLint/Prettierエラーの修正
+- [ ] レスポンシブ対応確認
+- [ ] アクセシビリティ確認
+- [ ] パフォーマンス影響評価
+
+### デプロイ前チェック
+- [ ] 全テストの通過確認
+- [ ] TypeScriptエラーゼロ確認
+- [ ] ESLintエラーゼロ確認
+- [ ] Vercel Build成功確認
+- [ ] 環境変数の設定確認
+- [ ] パフォーマンステスト実行
+- [ ] セキュリティチェック
+
+## まとめ
+
+このプロジェクトは、モダンなWebテクノロジーを活用したパーソナルポートフォリオサイトとして、技術力の証明とキャリア発展の基盤となることを目指します。
+
+**重要な成功要因**:
+1. **技術的卓越性**: 最新のベストプラクティス適用
+2. **ユーザー体験**: 高速・直感的・アクセシブル
+3. **保守性**: 長期運用可能な設計
+4. **スケーラビリティ**: 成長に対応できる拡張性
+
+すべての開発作業は、この目標に向けて一貫性を保ち、品質を妥協することなく進めることとします。
