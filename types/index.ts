@@ -1,10 +1,37 @@
-import { Post, Tag, Category, Project, Technology, User } from '@prisma/client'
-
 // Blog関連の型
-export type PostWithRelations = Post & {
-  author: User
-  tags: (PostTag & { tag: Tag })[]
-  category: Category | null
+export type PostWithRelations = {
+  id: string
+  title: string
+  slug: string
+  content: string
+  excerpt?: string | null
+  published: boolean
+  publishedAt?: Date | null
+  createdAt: Date
+  updatedAt: Date
+  authorId: string
+  categoryId?: string | null
+  author: {
+    id: string
+    name: string
+    email: string
+    image?: string | null
+  }
+  category?: {
+    id: string
+    name: string
+    slug: string
+  } | null
+  tags: {
+    id: string
+    tagId: string
+    postId: string
+    tag: {
+      id: string
+      name: string
+      slug: string
+    }
+  }[]
 }
 
 export type PostTag = {
@@ -65,4 +92,116 @@ export interface SEOData {
   description: string
   image?: string
   url: string
+}
+
+// カテゴリの型
+export type Category = {
+  id: string
+  name: string
+  slug: string
+  description?: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+// タグの型
+export type Tag = {
+  id: string
+  name: string
+  slug: string
+  description?: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+// ユーザーの型
+export type User = {
+  id: string
+  name: string
+  email: string
+  image?: string | null
+  role: 'USER' | 'ADMIN'
+  createdAt: Date
+  updatedAt: Date
+}
+
+// ブログ記事作成用の型
+export type CreatePostData = {
+  title: string
+  content: string
+  excerpt?: string
+  categoryId?: string
+  tagIds?: string[]
+  published?: boolean
+}
+
+// ブログ記事更新用の型
+export type UpdatePostData = Partial<CreatePostData> & {
+  id: string
+}
+
+// ブログ検索用の型
+export type BlogSearchParams = {
+  search?: string
+  category?: string
+  tag?: string
+  limit?: number
+  published?: boolean
+}
+
+// APIレスポンス用の型
+export type ApiResponse<T> = {
+  success: boolean
+  data?: T
+  error?: string
+  count?: number
+}
+
+// プロジェクト関連の型（後で使用）
+export type Project = {
+  id: string
+  title: string
+  description: string
+  content?: string
+  githubUrl?: string
+  liveUrl?: string
+  imageUrl?: string
+  technologies: Technology[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type Technology = {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  color?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// 人気タグの型
+export type PopularTag = {
+  id: string
+  name: string
+  slug: string
+  description?: string | null
+  createdAt: Date
+  updatedAt: Date
+  _count: {
+    posts: number
+  }
+}
+
+// PostTag関連の型
+export type PostTagWithTag = {
+  id: string
+  tagId: string
+  postId: string
+  tag: {
+    id: string
+    name: string
+    slug: string
+  }
 } 
