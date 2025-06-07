@@ -157,16 +157,23 @@ export type ApiResponse<T> = {
   count?: number
 }
 
-// プロジェクト関連の型（後で使用）
+// プロジェクト関連の型
 export type Project = {
   id: string
   title: string
+  slug: string
   description: string
-  content?: string
-  githubUrl?: string
-  liveUrl?: string
-  imageUrl?: string
-  technologies: Technology[]
+  content?: string | null
+  features?: string | null
+  challenges?: string | null
+  githubUrl?: string | null
+  demoUrl?: string | null
+  imageUrl?: string | null
+  featured: boolean
+  published: boolean
+  status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'ARCHIVED'
+  startDate?: Date | null
+  endDate?: Date | null
   createdAt: Date
   updatedAt: Date
 }
@@ -175,10 +182,60 @@ export type Technology = {
   id: string
   name: string
   slug: string
-  description?: string
-  color?: string
+  description?: string | null
+  color?: string | null
   createdAt: Date
   updatedAt: Date
+}
+
+// プロジェクト検索用の型
+export type ProjectSearchParams = {
+  tech?: string
+  featured?: string
+  search?: string
+  limit?: number
+  published?: boolean
+}
+
+// プロジェクト作成用の型
+export type CreateProjectData = {
+  title: string
+  slug: string
+  description: string
+  content?: string
+  features?: string
+  challenges?: string
+  githubUrl?: string
+  demoUrl?: string
+  imageUrl?: string
+  featured?: boolean
+  published?: boolean
+  status?: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'ARCHIVED'
+  startDate?: Date
+  endDate?: Date
+  technologyIds?: string[]
+}
+
+// プロジェクト更新用の型
+export type UpdateProjectData = Partial<CreateProjectData> & {
+  id: string
+}
+
+// GitHub情報の型
+export type GitHubRepoInfo = {
+  stars: number
+  forks: number
+  language: string | null
+  updatedAt: string
+  description: string | null
+}
+
+// プロジェクト統計の型
+export type ProjectStats = {
+  total: number
+  published: number
+  featured: number
+  technologies: number
 }
 
 // 人気タグの型
