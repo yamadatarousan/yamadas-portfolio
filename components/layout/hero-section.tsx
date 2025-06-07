@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 
 export function HeroSection() {
   const skills = [
-    'React', 'Next.js', 'TypeScript', 'Node.js', 'PHP', 'MySQL'
+    'React', 'Next.js', 'TypeScript', 'PHP', 'MySQL'
   ]
 
   const socialLinks = [
@@ -16,21 +16,6 @@ export function HeroSection() {
       name: 'GitHub',
       href: 'https://github.com/yamadatarousan',
       icon: GitHub,
-    },
-    {
-      name: 'LinkedIn',
-      href: 'https://linkedin.com/in/yamadataro',
-      icon: LinkedIn,
-    },
-    {
-      name: 'Twitter',
-      href: 'https://twitter.com/yamadataro',
-      icon: Twitter,
-    },
-    {
-      name: 'Email',
-      href: 'mailto:yamada@example.com',
-      icon: Mail,
     },
   ]
 
