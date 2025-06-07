@@ -33,37 +33,13 @@ async function ProjectStats() {
   ])
   
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
-        <div className="flex items-center justify-center mb-2">
-          <Folder className="h-6 w-6 text-blue-600" />
-        </div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.published}</div>
-        <div className="text-sm text-gray-600 dark:text-gray-400">プロジェクト</div>
-      </div>
-      
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
-        <div className="flex items-center justify-center mb-2">
-          <Star className="h-6 w-6 text-yellow-500" />
-        </div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.featured}</div>
-        <div className="text-sm text-gray-600 dark:text-gray-400">注目作品</div>
-      </div>
-      
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">            
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
         <div className="flex items-center justify-center mb-2">
           <Github className="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </div>
         <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{repositories.length}</div>
         <div className="text-sm text-gray-600 dark:text-gray-400">リポジトリ</div>
-      </div>
-      
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
-        <div className="flex items-center justify-center mb-2">
-          <Code className="h-6 w-6 text-green-600" />
-        </div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.technologies}</div>
-        <div className="text-sm text-gray-600 dark:text-gray-400">技術</div>
       </div>
     </div>
   )
@@ -206,8 +182,8 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
             プロジェクト一覧
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            これまでに開発したアプリケーション、ライブラリ、実験的なプロジェクトを紹介しています。<br />
-            様々な技術を使用して、実用的なソリューションの構築を心がけています。
+            これまでに開発したアプリケーション、ライブラリ、実験的なプロジェクトを紹介しています。
+            様々な技術を使用して実用的なソリューションの構築を心がけています。
           </p>
         </div>
 

@@ -11,7 +11,6 @@ export function Header() {
     { name: 'ホーム', href: '/' },
     { name: 'ブログ', href: '/blog' },
     { name: 'プロジェクト', href: '/projects' },
-    { name: 'お問い合わせ', href: '/contact' },
   ]
 
   return (
