@@ -86,16 +86,6 @@ export function HeroSection() {
               <br />
               モダンWebアプリケーションを創造
             </motion.p>
-            
-            <motion.p 
-              className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.7 }}
-            >
-              ユーザー体験を最優先に考えた設計思想で、
-              フロントエンドからバックエンドまで一貫した品質を提供します。
-            </motion.p>
           </div>
 
           {/* スキルタグ */}
@@ -143,11 +133,11 @@ export function HeroSection() {
             </Link>
             
             <Link 
-              href="/about" 
+              href="https://github.com/yamadatarousan" 
               className="group inline-flex items-center justify-center px-8 py-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 font-semibold rounded-2xl hover:bg-white dark:hover:bg-slate-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               <User className="mr-3 h-5 w-5" />
-              私について知る
+              私について
             </Link>
           </motion.div>
 
