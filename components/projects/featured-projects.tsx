@@ -1,12 +1,27 @@
 import Link from 'next/link'
-import { ArrowRight, Star } from 'lucide-react'
+import { ArrowRight, Star, Github } from 'lucide-react'
 import { getFeaturedProjects } from '@/lib/projects'
+import { getGitHubRepositories } from '@/lib/github'
 import { ProjectCard } from './project-card'
+import { GitHubRepoCard } from './github-repo-card'
 
 export async function FeaturedProjects() {
-  const featuredProjects = await getFeaturedProjects(3)
+  const [featuredProjects, repositories] = await Promise.all([
+    getFeaturedProjects(2), // 手動プロジェクトは2個に減らす
+    getGitHubRepositories(process.env.GITHUB_USERNAME || 'yamadatarousan', { 
+      per_page: 100, // 全件取得してから最適なものを選択
+      sort: 'updated'
+    }).catch(() => [])
+  ])
 
-  if (featuredProjects.length === 0) {
+  // Star数が多いリポジトリを1つ選ぶ
+  const popularRepo = repositories
+    .filter(repo => repo.stargazers_count > 0)
+    .sort((a, b) => b.stargazers_count - a.stargazers_count)[0]
+
+  const hasContent = featuredProjects.length > 0 || popularRepo
+
+  if (!hasContent) {
     return null
   }
 
@@ -31,6 +46,9 @@ export async function FeaturedProjects() {
           {featuredProjects.map((project: any) => (
             <ProjectCard key={project.id} project={project} />
           ))}
+          {popularRepo && (
+            <GitHubRepoCard key={`github-${popularRepo.id}`} repository={popularRepo} />
+          )}
         </div>
 
         {/* すべてのプロジェクトを見るリンク */}

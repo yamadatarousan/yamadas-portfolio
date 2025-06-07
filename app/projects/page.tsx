@@ -1,8 +1,10 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { Search, Filter, Code, Folder, Star } from 'lucide-react'
+import { Search, Filter, Code, Folder, Star, Github } from 'lucide-react'
 import { getProjects, getTechnologies, getProjectStats } from '@/lib/projects'
+import { getGitHubRepositories } from '@/lib/github'
 import { ProjectCard } from '@/components/projects/project-card'
+import { GitHubRepoCard } from '@/components/projects/github-repo-card'
 
 export const revalidate = 3600 // 1時間でキャッシュを更新
 
@@ -25,7 +27,10 @@ interface PageProps {
 }
 
 async function ProjectStats() {
-  const stats = await getProjectStats()
+  const [stats, repositories] = await Promise.all([
+    getProjectStats(),
+    getGitHubRepositories(process.env.GITHUB_USERNAME || 'yamadatarousan', { per_page: 100 }).catch(() => [])
+  ])
   
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -47,18 +52,18 @@ async function ProjectStats() {
       
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
         <div className="flex items-center justify-center mb-2">
-          <Code className="h-6 w-6 text-green-600" />
+          <Github className="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.technologies}</div>
-        <div className="text-sm text-gray-600 dark:text-gray-400">技術</div>
+        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{repositories.length}</div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">リポジトリ</div>
       </div>
       
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
         <div className="flex items-center justify-center mb-2">
-          <Filter className="h-6 w-6 text-purple-600" />
+          <Code className="h-6 w-6 text-green-600" />
         </div>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</div>
-        <div className="text-sm text-gray-600 dark:text-gray-400">全作品</div>
+        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.technologies}</div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">技術</div>
       </div>
     </div>
   )
@@ -104,13 +109,33 @@ async function TechnologyFilter({ selectedTech }: { selectedTech?: string }) {
 }
 
 async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchParams'] }) {
-  const projects = await getProjects({
-    published: true,
-    featured: searchParams.featured === 'true' ? true : undefined,
-    technologySlug: searchParams.tech,
+  const [projects, repositories] = await Promise.all([
+    getProjects({
+      published: true,
+      featured: searchParams.featured === 'true' ? true : undefined,
+      technologySlug: searchParams.tech,
+    }),
+    getGitHubRepositories(process.env.GITHUB_USERNAME || 'yamadatarousan', { 
+      per_page: 100, // 最大100件まで取得
+      sort: 'updated'
+    }).catch(() => [])
+  ])
+  
+  // フィルタリング条件に応じてGitHubリポジトリもフィルタリング
+  const filteredRepositories = repositories.filter(repo => {
+    if (searchParams.featured === 'true') {
+      return repo.stargazers_count > 10
+    }
+    if (searchParams.tech) {
+      return repo.language?.toLowerCase() === searchParams.tech.toLowerCase() ||
+             repo.topics.some(topic => topic.toLowerCase().includes(searchParams.tech!.toLowerCase()))
+    }
+    return true
   })
   
-  if (projects.length === 0) {
+  const totalItems = projects.length + filteredRepositories.length
+  
+  if (totalItems === 0) {
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">🔍</div>
@@ -127,10 +152,46 @@ async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchPa
   }
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {projects.map((project: any) => (
-        <ProjectCard key={project.id} project={project} />
-      ))}
+    <div className="space-y-8">
+      {/* 手動追加プロジェクト */}
+      {projects.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+            ✨ 注目プロジェクト
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {projects.map((project: any) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </div>
+      )}
+
+              {/* GitHubリポジトリ */}
+        {filteredRepositories.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <Github className="h-6 w-6" />
+                GitHub リポジトリ
+              </h2>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {searchParams.tech || searchParams.featured ? (
+                  <>
+                    {filteredRepositories.length}件 / 全{repositories.length}件
+                  </>
+                ) : (
+                  <>{repositories.length}件のリポジトリ</>
+                )}
+              </div>
+            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredRepositories.map((repository) => (
+              <GitHubRepoCard key={repository.id} repository={repository} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

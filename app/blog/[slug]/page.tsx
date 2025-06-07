@@ -1,167 +1,157 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, User, Tag as TagIcon } from 'lucide-react'
-import { getPostBySlug, getRelatedPosts, calculateReadingTime } from '@/lib/blog'
-import { MarkdownContent } from '@/components/blog/markdown-content'
-import { PostCard } from '@/components/blog/post-card'
+import { CalendarDays, Clock, User, Tag, ArrowLeft } from 'lucide-react'
+import { getPostBySlug } from '@/lib/blog'
+import { formatDate } from '@/lib/utils'
 
 interface BlogPostPageProps {
-  params: Promise<{
+  params: {
     slug: string
-  }>
+  }
 }
 
-// 静的生成のためのメタデータ
-export async function generateMetadata({ params }: BlogPostPageProps) {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
-  
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const post = await getPostBySlug(decodeURIComponent(params.slug))
+
   if (!post) {
     return {
-      title: '記事が見つかりません',
+      title: 'ページが見つかりません',
     }
   }
 
   return {
-    title: post.title,
-    description: post.excerpt || post.content.substring(0, 160),
+    title: `${post.title} | Blog`,
+    description: post.excerpt || `${post.title}についての記事です。`,
     openGraph: {
       title: post.title,
-      description: post.excerpt || post.content.substring(0, 160),
+      description: post.excerpt || '',
       type: 'article',
       publishedTime: post.publishedAt?.toISOString(),
-      authors: [post.author.name],
+      authors: [post.author?.name || 'Unknown'],
     },
   }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
+  const post = await getPostBySlug(decodeURIComponent(params.slug))
 
-  if (!post) {
+  if (!post || (!post.published && process.env.NODE_ENV === 'production')) {
     notFound()
   }
 
-  const [relatedPosts, readingTime] = await Promise.all([
-    getRelatedPosts(post.id),
-    Promise.resolve(calculateReadingTime(post.content)),
-  ])
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* ヘッダー */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          {/* 戻るボタン */}
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mb-8 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            ブログ一覧に戻る
-          </Link>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* 戻るボタン */}
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 mb-8 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          ブログ一覧に戻る
+        </Link>
 
-          {/* カテゴリ */}
-          {post.category && (
-            <div className="mb-4">
-              <span className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full">
-                {post.category.name}
-              </span>
-            </div>
-          )}
+        <article className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
+          {/* ヘッダー */}
+          <header className="px-8 py-8 border-b border-slate-200 dark:border-slate-800">
+            <div className="space-y-4">
+              {/* ステータスバッジ */}
+              {!post.published && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                  下書き
+                </span>
+              )}
 
-          {/* タイトル */}
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6 leading-tight">
-            {post.title}
-          </h1>
+              {/* タイトル */}
+              <h1 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
+                {post.title}
+              </h1>
 
-          {/* メタデータ */}
-          <div className="flex flex-wrap items-center gap-6 text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <time dateTime={post.publishedAt?.toISOString()}>
-                {post.publishedAt 
-                  ? new Date(post.publishedAt).toLocaleDateString('ja-JP', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })
-                  : new Date(post.createdAt).toLocaleDateString('ja-JP', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })
-                }
-              </time>
+              {/* 概要 */}
+              {post.excerpt && (
+                <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {post.excerpt}
+                </p>
+              )}
+
+              {/* メタ情報 */}
+              <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span>{post.author?.name || 'Unknown Author'}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span>約 {Math.ceil(post.content.length / 500)} 分で読めます</span>
+                </div>
+              </div>
+
+              {/* タグ */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Tag className="h-4 w-4 text-slate-400" />
+                  {post.tags.map((postTag: any) => (
+                    <span
+                      key={postTag.tag.id}
+                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full"
+                    >
+                      {postTag.tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>{readingTime.text}</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span>{post.author.name}</span>
+          </header>
+
+          {/* コンテンツ */}
+          <div className="px-8 py-8">
+            <div className="prose prose-slate dark:prose-invert max-w-none prose-lg">
+              <div 
+                className="leading-relaxed"
+                dangerouslySetInnerHTML={{ 
+                  __html: post.content.replace(/\n/g, '<br />') 
+                }} 
+              />
             </div>
           </div>
 
-          {/* タグ */}
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-6">
-              <TagIcon className="h-4 w-4 text-gray-600 dark:text-gray-400 mt-1" />
-              {post.tags.map((postTag: any) => (
+          {/* フッター */}
+          <footer className="px-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-slate-500 dark:text-slate-400">
+                最終更新: {formatDate(post.updatedAt)}
+              </div>
+              
+              {/* 編集リンク（開発環境または下書きの場合） */}
+              {(process.env.NODE_ENV === 'development' || !post.published) && (
                 <Link
-                  key={postTag.tag.id}
-                  href={`/blog/tag/${postTag.tag.slug}`}
-                  className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                  href={`/admin/posts/${post.id}/edit`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
                 >
-                  #{postTag.tag.name}
+                  編集する
                 </Link>
-              ))}
+              )}
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* コンテンツ */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 lg:p-12">
-          <MarkdownContent content={post.content} />
-        </div>
-
-        {/* 関連記事 */}
-        {relatedPosts.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">
-              関連記事
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {relatedPosts.map((relatedPost) => (
-                <PostCard key={relatedPost.id} post={relatedPost} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* シェアボタン（後で実装）*/}
-        <div className="mt-12 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-            この記事をシェア
-          </h3>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            シェア機能は後で実装予定です
-          </div>
-        </div>
+          </footer>
+        </article>
       </div>
     </div>
   )
 }
 
-// 404ページが必要な場合のためのnot-found.tsx
-export function generateStaticParams() {
-  // 静的生成のためのパラメータを返す
-  // プロダクションではデータベースから記事のスラッグを取得
-  return []
+// 静的生成用の関数（オプション）
+export async function generateStaticParams() {
+  // 本番環境では公開済みの記事のみ
+  const posts = await import('@/lib/blog').then(lib => lib.getPosts({ published: true }))
+  
+  return posts.map((post: any) => ({
+    slug: post.slug,
+  }))
 } 

@@ -1,161 +1,123 @@
-import { Suspense } from 'react'
-import { PostCard } from '@/components/blog/post-card'
-import { getPosts, getCategories, getPopularTags } from '@/lib/blog'
+import { Metadata } from 'next'
 import Link from 'next/link'
+import { CalendarDays, Clock, User, Search } from 'lucide-react'
+import { getPosts } from '@/lib/blog'
+import { formatDate } from '@/lib/utils'
 
-// ISRで再生成間隔を設定
-export const revalidate = 3600 // 1時間
-
-export default async function BlogPage() {
-  // 並列でデータを取得
-  const [posts, categories, popularTags] = await Promise.all([
-    getPosts({ limit: 12 }),
-    getCategories(),
-    getPopularTags(8),
-  ])
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* ヘッダーセクション */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              ブログ
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              技術、開発、学習について書いています。
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* メインコンテンツ */}
-          <div className="lg:col-span-3">
-            {/* 記事一覧 */}
-            <Suspense fallback={<PostsLoading />}>
-              {posts.length > 0 ? (
-                <div className="grid gap-8 md:grid-cols-2">
-                  {posts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16">
-                  <div className="text-6xl mb-4">📝</div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                    記事がありません
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    最初の記事を投稿してみましょう！
-                  </p>
-                </div>
-              )}
-            </Suspense>
-
-            {/* ページネーション（後で実装）*/}
-            {posts.length >= 12 && (
-              <div className="mt-12 text-center">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  ページネーション機能は後で実装予定
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* サイドバー */}
-          <div className="space-y-8">
-            {/* カテゴリ */}
-            {categories.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                  カテゴリ
-                </h3>
-                <div className="space-y-2">
-                  {categories.map((category: any) => (
-                    <Link
-                      key={category.id}
-                      href={`/blog/category/${category.slug}`}
-                      className="block text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 人気タグ */}
-            {popularTags.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                  人気タグ
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {popularTags.map((tag: any) => (
-                    <Link
-                      key={tag.id}
-                      href={`/blog/tag/${tag.slug}`}
-                      className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                    >
-                      #{tag.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 最近の記事 */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                最近の記事
-              </h3>
-              <div className="space-y-3">
-                {posts.slice(0, 5).map((post) => (
-                  <Link
-                    key={post.id}
-                    href={`/blog/${post.slug}`}
-                    className="block group"
-                  >
-                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                      {post.title}
-                    </h4>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                      {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('ja-JP') : new Date(post.createdAt).toLocaleDateString('ja-JP')}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+export const metadata: Metadata = {
+  title: 'ブログ | My Portfolio',
+  description: '技術に関する記事やチュートリアルを掲載しています。',
 }
 
-// ローディングコンポーネント
-function PostsLoading() {
+export default async function BlogPage() {
+  const posts = await getPosts({ published: true })
+
   return (
-    <div className="grid gap-8 md:grid-cols-2">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden animate-pulse">
-          <div className="aspect-video bg-gray-200 dark:bg-gray-700" />
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16" />
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12" />
-            </div>
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3" />
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded" />
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6" />
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* ヘッダー */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl lg:text-6xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Tech Blog
+            </span>
+          </h1>
+          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            最新の技術トレンド、開発手法、学んだことをシェアしています
+          </p>
         </div>
-      ))}
+
+        {/* 記事一覧 */}
+        {posts.length > 0 ? (
+          <div className="grid gap-8 lg:grid-cols-2">
+            {posts.map((post: any) => (
+              <article
+                key={post.id}
+                className="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+              >
+                <div className="p-8">
+                  {/* タグ */}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {post.tags.slice(0, 3).map((postTag: any) => (
+                        <span
+                          key={postTag.tag.id}
+                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full"
+                        >
+                          {postTag.tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* タイトル */}
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <Link href={`/blog/${encodeURIComponent(post.slug)}`}>
+                      {post.title}
+                    </Link>
+                  </h2>
+
+                  {/* 概要 */}
+                  {post.excerpt && (
+                    <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                      {post.excerpt}
+                    </p>
+                  )}
+
+                  {/* メタ情報 */}
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4" />
+                      <span>{post.author?.name || 'Unknown'}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      <CalendarDays className="h-4 w-4" />
+                      <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      <span>約 {Math.ceil(post.content.length / 500)} 分</span>
+                    </div>
+                  </div>
+
+                  {/* 続きを読むリンク */}
+                  <div className="mt-6">
+                    <Link
+                      href={`/blog/${encodeURIComponent(post.slug)}`}
+                      className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
+                    >
+                      続きを読む
+                      <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 mx-auto mb-6 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+              <Search className="h-12 w-12 text-slate-400" />
+            </div>
+            <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              記事がありません
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-8">
+              最初のブログ記事を作成しましょう
+            </p>
+            <Link
+              href="/admin/posts/new"
+              className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              記事を作成
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   )
 } 

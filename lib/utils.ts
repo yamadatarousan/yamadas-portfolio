@@ -16,9 +16,11 @@ export function formatDate(date: Date | string): string {
 export function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '') // 英数字、スペース、ハイフン以外を削除
-    .replace(/[\s_-]+/g, '-') // スペース、アンダースコア、ハイフンをハイフンに変換
-    .replace(/^-+|-+$/g, '') // 先頭と末尾のハイフンを削除
+    .trim()
+    .replace(/[\s]+/g, '-')           // スペースをハイフンに
+    .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3400-\u4DBF-]/g, '')  // 日本語文字と英数字以外を削除
+    .replace(/-+/g, '-')             // 連続するハイフンを1つに
+    .replace(/^-|-$/g, '')           // 先頭と末尾のハイフンを削除
 }
 
 export function truncate(text: string, maxLength: number): string {
