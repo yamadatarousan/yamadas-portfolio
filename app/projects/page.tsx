@@ -19,11 +19,11 @@ export const metadata: Metadata = {
 }
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     tech?: string
     featured?: string
     search?: string
-  }
+  }>
 }
 
 async function ProjectStats() {
@@ -45,8 +45,9 @@ async function ProjectStats() {
   )
 }
 
-async function TechnologyFilter({ selectedTech }: { selectedTech?: string }) {
+async function TechnologyFilter({ searchParams }: { searchParams: PageProps['searchParams'] }) {
   const technologies = await getTechnologies()
+  const { tech: selectedTech } = await searchParams
   
   return (
     <div className="mb-8">
@@ -85,11 +86,13 @@ async function TechnologyFilter({ selectedTech }: { selectedTech?: string }) {
 }
 
 async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchParams'] }) {
+  const { tech, featured } = await searchParams
+  
   const [projects, repositories] = await Promise.all([
     getProjects({
       published: true,
-      featured: searchParams.featured === 'true' ? true : undefined,
-      technologySlug: searchParams.tech,
+      featured: featured === 'true' ? true : undefined,
+      technologySlug: tech,
     }),
     getGitHubRepositories(process.env.GITHUB_USERNAME || 'yamadatarousan', { 
       per_page: 100, // 最大100件まで取得
@@ -99,12 +102,12 @@ async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchPa
   
   // フィルタリング条件に応じてGitHubリポジトリもフィルタリング
   const filteredRepositories = repositories.filter(repo => {
-    if (searchParams.featured === 'true') {
+    if (featured === 'true') {
       return repo.stargazers_count > 10
     }
-    if (searchParams.tech) {
-      return repo.language?.toLowerCase() === searchParams.tech.toLowerCase() ||
-             repo.topics.some(topic => topic.toLowerCase().includes(searchParams.tech!.toLowerCase()))
+    if (tech) {
+      return repo.language?.toLowerCase() === tech.toLowerCase() ||
+             repo.topics.some(topic => topic.toLowerCase().includes(tech!.toLowerCase()))
     }
     return true
   })
@@ -119,8 +122,8 @@ async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchPa
           プロジェクトが見つかりませんでした
         </h3>
         <p className="text-gray-600 dark:text-gray-400">
-          {searchParams.tech
-            ? `「${searchParams.tech}」に関連するプロジェクトはありません。`
+          {tech
+            ? `「${tech}」に関連するプロジェクトはありません。`
             : '現在、公開可能なプロジェクトがありません。'}
         </p>
       </div>
@@ -152,7 +155,7 @@ async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchPa
                 GitHub リポジトリ
               </h2>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                {searchParams.tech || searchParams.featured ? (
+                {tech || featured ? (
                   <>
                     {filteredRepositories.length}件 / 全{repositories.length}件
                   </>
@@ -173,6 +176,8 @@ async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchPa
 }
 
 export default async function ProjectsPage({ searchParams }: PageProps) {
+  const { tech, featured } = await searchParams
+  
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -194,19 +199,19 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
 
         {/* フィルター */}
         <Suspense fallback={<div className="h-16 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse mb-8" />}>
-          <TechnologyFilter selectedTech={searchParams.tech} />
+          <TechnologyFilter searchParams={searchParams} />
         </Suspense>
 
         {/* 現在のフィルター表示 */}
-        {(searchParams.tech || searchParams.featured) && (
+        {(tech || featured) && (
           <div className="mb-6 flex items-center gap-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">現在のフィルター:</span>
-            {searchParams.tech && (
+            {tech && (
               <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm rounded-full">
-                技術: {searchParams.tech}
+                技術: {tech}
               </span>
             )}
-            {searchParams.featured && (
+            {featured && (
               <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-sm rounded-full">
                 注目プロジェクトのみ
               </span>

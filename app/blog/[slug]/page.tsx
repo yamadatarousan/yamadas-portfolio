@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { CalendarDays, Clock, User, Tag, ArrowLeft } from 'lucide-react'
 import { getPostBySlug } from '@/lib/blog'
 import { formatDate } from '@/lib/utils'
+import { MarkdownContent } from '@/components/blog/markdown-content'
 
 interface BlogPostPageProps {
   params: {
@@ -112,14 +113,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* コンテンツ */}
           <div className="px-8 py-8">
-            <div className="prose prose-slate dark:prose-invert max-w-none prose-lg">
-              <div 
-                className="leading-relaxed"
-                dangerouslySetInnerHTML={{ 
-                  __html: post.content.replace(/\n/g, '<br />') 
-                }} 
-              />
-            </div>
+            <MarkdownContent content={post.content} />
           </div>
 
           {/* フッター */}

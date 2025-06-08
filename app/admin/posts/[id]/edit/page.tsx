@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { MarkdownContent } from '@/components/blog/markdown-content'
 
 export default function EditPostPage() {
   const router = useRouter()
@@ -19,6 +20,7 @@ export default function EditPostPage() {
     tags: '',
     published: false
   })
+  const [showPreview, setShowPreview] = useState(false)
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -196,18 +198,44 @@ export default function EditPostPage() {
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
-            <label htmlFor="content" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              記事内容 *
-            </label>
-            <textarea
-              id="content"
-              required
-              rows={20}
-              value={formData.content}
-              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white font-mono text-sm"
-              placeholder="Markdown形式で記事内容を入力..."
-            />
+            <div className="flex items-center justify-between mb-4">
+              <label htmlFor="content" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                記事内容 *
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowPreview(!showPreview)}
+                className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-blue-200 dark:border-blue-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                {showPreview ? 'エディタ' : 'プレビュー'}
+              </button>
+            </div>
+            
+            {showPreview ? (
+              <div className="border border-slate-300 dark:border-slate-600 rounded-lg p-4 min-h-[500px] bg-slate-50 dark:bg-slate-800">
+                {formData.content ? (
+                  <MarkdownContent content={formData.content} />
+                ) : (
+                  <p className="text-slate-500 dark:text-slate-400 italic">
+                    記事内容を入力するとプレビューが表示されます
+                  </p>
+                )}
+              </div>
+            ) : (
+              <textarea
+                id="content"
+                required
+                rows={20}
+                value={formData.content}
+                onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white font-mono text-sm"
+                placeholder="Markdown形式で記事内容を入力..."
+              />
+            )}
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
