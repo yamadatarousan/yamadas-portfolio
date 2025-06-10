@@ -317,6 +317,31 @@ GITHUB_TOKEN="your-github-token"
 - セキュリティベストプラクティスの遵守
 - アクセシビリティへの配慮
 
+## 🔧 **LINTER・FORMATTER自動修正の強制実行ルール**
+
+### ❗ **必須実行順序**
+ESLintエラーやコードフォーマットの問題を発見した場合、**手動修正の前に必ず以下を実行する**：
+
+1. **ESLint自動修正**: `npm run lint:fix`
+2. **Prettier自動フォーマット**: `npm run format`
+3. **型チェック**: `npm run type-check`
+
+### 🚨 **AIアシスタントの強制行動**
+- ESLintエラーやフォーマット問題を発見した際は、まず上記コマンドを実行
+- 自動修正で解決できない問題のみ手動修正を実施
+- 手動修正は最小限に留め、効率性を重視
+- 未使用インポート、フォーマットエラー、基本的な構文エラーは必ず自動修正で解決
+
+### 📝 **利用可能なスクリプト**
+```bash
+npm run lint:fix        # ESLint自動修正
+npm run format          # Prettier自動フォーマット
+npm run type-check      # TypeScript型チェック
+npm run lint:fix && npm run format  # まとめて実行
+```
+
+この自動修正により、作業効率を大幅に向上させ、手動作業を最小限に抑制する。
+
 ## プロジェクト固有の注意事項
 
 ### ポートフォリオサイト特有の要件

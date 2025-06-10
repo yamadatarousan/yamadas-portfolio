@@ -1,17 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getPosts } from '@/lib/blog'
-import { prisma } from '@/lib/db'
-import { generateExcerpt } from '@/lib/blog'
+import { NextRequest, NextResponse } from 'next/server';
+import { getPosts } from '@/lib/blog';
+import { prisma } from '@/lib/db';
+import { generateExcerpt } from '@/lib/blog';
 
 // GET - ブログ記事一覧を取得
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined
-    const published = searchParams.get('published') !== 'false'
-    const categorySlug = searchParams.get('category') || undefined
-    const tagSlug = searchParams.get('tag') || undefined
-    const search = searchParams.get('search') || undefined
+    const { searchParams } = new URL(request.url);
+    const limit = searchParams.get('limit')
+      ? parseInt(searchParams.get('limit')!)
+      : undefined;
+    const published = searchParams.get('published') !== 'false';
+    const categorySlug = searchParams.get('category') || undefined;
+    const tagSlug = searchParams.get('tag') || undefined;
+    const search = searchParams.get('search') || undefined;
 
     const posts = await getPosts({
       limit,
@@ -19,29 +21,29 @@ export async function GET(request: NextRequest) {
       categorySlug,
       tagSlug,
       search,
-    })
+    });
 
     return NextResponse.json({
       success: true,
       data: posts,
       count: posts.length,
-    })
+    });
   } catch (error) {
-    console.error('Failed to fetch posts:', error)
+    console.error('Failed to fetch posts:', error);
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch posts',
       },
       { status: 500 }
-    )
+    );
   }
 }
 
 // POST - 新しいブログ記事を作成
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const body = await request.json();
     const {
       title,
       content,
@@ -50,7 +52,7 @@ export async function POST(request: NextRequest) {
       tagIds = [],
       published = false,
       authorId, // 実際の実装では認証から取得
-    } = body
+    } = body;
 
     // バリデーション
     if (!title || !content || !authorId) {
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
           error: 'Title, content, and authorId are required',
         },
         { status: 400 }
-      )
+      );
     }
 
     // スラッグを生成（簡易版）
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
       .replace(/[^a-z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '')
-      .substring(0, 100)
+      .substring(0, 100);
 
     // 記事を作成
     const post = await prisma.post.create({
@@ -99,20 +101,20 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-    })
+    });
 
     return NextResponse.json({
       success: true,
       data: post,
-    })
+    });
   } catch (error) {
-    console.error('Failed to create post:', error)
+    console.error('Failed to create post:', error);
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to create post',
       },
       { status: 500 }
-    )
+    );
   }
-} 
+}

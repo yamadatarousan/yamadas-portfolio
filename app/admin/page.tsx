@@ -1,11 +1,10 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
-
+import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: '管理者ダッシュボード | My Portfolio',
   description: 'ブログとプロジェクトの管理画面',
-}
+};
 
 /*
 async function DashboardStats() {
@@ -148,80 +147,141 @@ async function RecentPosts() {
 
 export default function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='mb-8'>
+          <h1 className='text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2'>
             管理者ダッシュボード
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+          <p className='text-lg text-slate-600 dark:text-slate-400'>
             ブログ記事とプロジェクトを管理しましょう
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
           <Link
-            href="/admin/posts/new"
-            className="flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-200 group"
+            href='/admin/posts/new'
+            className='flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-200 group'
           >
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <svg className="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+              <svg
+                className='h-5 w-5 text-blue-600 dark:text-blue-400'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M12 6v6m0 0v6m0-6h6m-6 0H6'
+                />
               </svg>
             </div>
             <div>
-              <div className="font-medium text-slate-900 dark:text-slate-100">新しい記事</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">ブログ記事を作成</div>
+              <div className='font-medium text-slate-900 dark:text-slate-100'>
+                新しい記事
+              </div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>
+                ブログ記事を作成
+              </div>
             </div>
           </Link>
 
           <Link
-            href="/admin/posts"
-            className="flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-lg transition-all duration-200 group"
+            href='/admin/posts'
+            className='flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-lg transition-all duration-200 group'
           >
-            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-              <svg className="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+              <svg
+                className='h-5 w-5 text-emerald-600 dark:text-emerald-400'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+                />
               </svg>
             </div>
             <div>
-              <div className="font-medium text-slate-900 dark:text-slate-100">記事管理</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">記事を編集・削除</div>
+              <div className='font-medium text-slate-900 dark:text-slate-100'>
+                記事管理
+              </div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>
+                記事を編集・削除
+              </div>
             </div>
           </Link>
 
           <Link
-            href="/projects"
-            className="flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-200 group"
+            href='/projects'
+            className='flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-200 group'
           >
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-              <svg className="h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+              <svg
+                className='h-5 w-5 text-purple-600 dark:text-purple-400'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+                />
               </svg>
             </div>
             <div>
-              <div className="font-medium text-slate-900 dark:text-slate-100">プロジェクト</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">プロジェクト一覧</div>
+              <div className='font-medium text-slate-900 dark:text-slate-100'>
+                プロジェクト
+              </div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>
+                プロジェクト一覧
+              </div>
             </div>
           </Link>
 
           <Link
-            href="/blog"
-            className="flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-lg transition-all duration-200 group"
+            href='/blog'
+            className='flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-lg transition-all duration-200 group'
           >
-            <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-              <svg className="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
+              <svg
+                className='h-5 w-5 text-amber-600 dark:text-amber-400'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
+                />
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
+                />
               </svg>
             </div>
             <div>
-              <div className="font-medium text-slate-900 dark:text-slate-100">ブログ表示</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">公開ページを確認</div>
+              <div className='font-medium text-slate-900 dark:text-slate-100'>
+                ブログ表示
+              </div>
+              <div className='text-sm text-slate-600 dark:text-slate-400'>
+                公開ページを確認
+              </div>
             </div>
           </Link>
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

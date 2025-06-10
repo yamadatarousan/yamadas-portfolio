@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
   // ユーザーの作成
@@ -12,7 +12,7 @@ async function main() {
       name: 'Admin User',
       role: 'ADMIN',
     },
-  })
+  });
 
   // カテゴリの作成
   const categories = await Promise.all([
@@ -43,7 +43,7 @@ async function main() {
         description: '日常の記録',
       },
     }),
-  ])
+  ]);
 
   // タグの作成
   const tags = await Promise.all([
@@ -83,7 +83,7 @@ async function main() {
         description: 'Prismaに関する記事',
       },
     }),
-  ])
+  ]);
 
   // 技術の作成
   const technologies = await Promise.all([
@@ -157,7 +157,7 @@ async function main() {
         color: '#000000',
       },
     }),
-  ])
+  ]);
 
   // プロジェクトの作成
   const projects = await Promise.all([
@@ -167,7 +167,8 @@ async function main() {
       create: {
         title: 'パーソナルポートフォリオサイト',
         slug: 'portfolio-website',
-        description: 'Next.js と TypeScript で構築したモダンなポートフォリオサイト。ブログ機能とプロジェクト紹介機能を備えています。',
+        description:
+          'Next.js と TypeScript で構築したモダンなポートフォリオサイト。ブログ機能とプロジェクト紹介機能を備えています。',
         content: `このポートフォリオサイトは、最新のWeb技術を使用して構築されています。
 
 ## 主な特徴
@@ -214,7 +215,8 @@ TypeScriptとPrismaを組み合わせることで、フロントエンドから�
       create: {
         title: 'タスク管理アプリ',
         slug: 'task-management-app',
-        description: 'チーム向けのタスク管理アプリケーション。リアルタイム同期とカンバンボード機能を備えています。',
+        description:
+          'チーム向けのタスク管理アプリケーション。リアルタイム同期とカンバンボード機能を備えています。',
         content: `効率的なチーム作業を支援するタスク管理アプリケーションです。
 
 ## 技術的な特徴
@@ -250,7 +252,8 @@ TypeScriptとPrismaを組み合わせることで、フロントエンドから�
       create: {
         title: 'Eコマースプラットフォーム',
         slug: 'ecommerce-platform',
-        description: 'モダンなEコマースプラットフォーム。決済機能、在庫管理、注文管理を備えた本格的なオンラインストアです。',
+        description:
+          'モダンなEコマースプラットフォーム。決済機能、在庫管理、注文管理を備えた本格的なオンラインストアです。',
         content: `スケーラブルで高性能なEコマースプラットフォームです。
 
 ## アーキテクチャ
@@ -274,7 +277,7 @@ TypeScriptとPrismaを組み合わせることで、フロントエンドから�
         startDate: new Date('2024-03-01'),
       },
     }),
-  ])
+  ]);
 
   // プロジェクトと技術の関連付け
   await Promise.all([
@@ -413,7 +416,7 @@ TypeScriptとPrismaを組み合わせることで、フロントエンドから�
         technologyId: technologies[2].id,
       },
     }),
-  ])
+  ]);
 
   // ブログ記事の作成
   const posts = await Promise.all([
@@ -462,7 +465,8 @@ export default function RootLayout({
 
 ## まとめ
 App Routerは、より直感的で強力なルーティングシステムを提供します。`,
-        excerpt: 'Next.js 13で導入されたApp Routerの基本的な使い方から応用まで、実例を交えて詳しく解説します。',
+        excerpt:
+          'Next.js 13で導入されたApp Routerの基本的な使い方から応用まで、実例を交えて詳しく解説します。',
         published: true,
         publishedAt: new Date('2024-01-15'),
         authorId: user.id,
@@ -513,14 +517,15 @@ interface ApiResponse<T> {
 
 ## まとめ
 TypeScriptの型システムを適切に活用することで、より安全で保守性の高いコードを書くことができます。`,
-        excerpt: '2024年版TypeScriptのベストプラクティスを、実際のコード例とともに紹介します。',
+        excerpt:
+          '2024年版TypeScriptのベストプラクティスを、実際のコード例とともに紹介します。',
         published: true,
         publishedAt: new Date('2024-01-20'),
         authorId: user.id,
         categoryId: categories[0].id, // 技術
       },
     }),
-  ])
+  ]);
 
   // ブログ記事とタグの関連付け
   await Promise.all([
@@ -563,16 +568,16 @@ TypeScriptの型システムを適切に活用することで、より安全で�
         tagId: tags[2].id,
       },
     }),
-  ])
+  ]);
 
-  console.log('Seed data created successfully!')
+  console.log('Seed data created successfully!');
 }
 
 main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
+  .catch(e => {
+    console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  }) 
+    await prisma.$disconnect();
+  });

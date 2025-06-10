@@ -1,13 +1,13 @@
-import { prisma } from '@/lib/db'
-import readingTime from 'reading-time'
+import { prisma } from '@/lib/db';
+import readingTime from 'reading-time';
 
 // ブログ記事一覧を取得
 export async function getPosts(options?: {
-  limit?: number
-  published?: boolean
-  categorySlug?: string
-  tagSlug?: string
-  search?: string
+  limit?: number;
+  published?: boolean;
+  categorySlug?: string;
+  tagSlug?: string;
+  search?: string;
 }) {
   const {
     limit,
@@ -15,7 +15,7 @@ export async function getPosts(options?: {
     categorySlug,
     tagSlug,
     search,
-  } = options || {}
+  } = options || {};
 
   try {
     const posts = await prisma.post.findMany({
@@ -56,12 +56,12 @@ export async function getPosts(options?: {
         publishedAt: 'desc',
       },
       ...(limit && { take: limit }),
-    })
+    });
 
-    return posts as any[]
+    return posts as any[];
   } catch (error) {
-    console.error('Failed to fetch posts:', error)
-    return []
+    console.error('Failed to fetch posts:', error);
+    return [];
   }
 }
 
@@ -79,12 +79,12 @@ export async function getPostBySlug(slug: string) {
         },
         category: true,
       },
-    })
+    });
 
-    return post as any
+    return post as any;
   } catch (error) {
-    console.error('Failed to fetch post:', error)
-    return null
+    console.error('Failed to fetch post:', error);
+    return null;
   }
 }
 
@@ -102,12 +102,12 @@ export async function getPostById(id: string) {
         },
         category: true,
       },
-    })
+    });
 
-    return post as any
+    return post as any;
   } catch (error) {
-    console.error('Failed to fetch post:', error)
-    return null
+    console.error('Failed to fetch post:', error);
+    return null;
   }
 }
 
@@ -124,11 +124,11 @@ export async function getRelatedPosts(postId: string, limit = 3) {
           },
         },
       },
-    })
+    });
 
-    if (!currentPost) return []
+    if (!currentPost) return [];
 
-    const tagIds = currentPost.tags.map((pt: any) => pt.tag.id)
+    const tagIds = currentPost.tags.map((pt: any) => pt.tag.id);
 
     // 同じタグを持つ記事を検索（現在の記事は除外）
     const relatedPosts = await prisma.post.findMany({
@@ -154,12 +154,12 @@ export async function getRelatedPosts(postId: string, limit = 3) {
       orderBy: {
         publishedAt: 'desc',
       },
-    })
+    });
 
-    return relatedPosts as any[]
+    return relatedPosts as any[];
   } catch (error) {
-    console.error('Failed to fetch related posts:', error)
-    return []
+    console.error('Failed to fetch related posts:', error);
+    return [];
   }
 }
 
@@ -170,11 +170,11 @@ export async function getCategories() {
       orderBy: {
         name: 'asc',
       },
-    })
-    return categories
+    });
+    return categories;
   } catch (error) {
-    console.error('Failed to fetch categories:', error)
-    return []
+    console.error('Failed to fetch categories:', error);
+    return [];
   }
 }
 
@@ -185,11 +185,11 @@ export async function getTags() {
       orderBy: {
         name: 'asc',
       },
-    })
-    return tags
+    });
+    return tags;
   } catch (error) {
-    console.error('Failed to fetch tags:', error)
-    return []
+    console.error('Failed to fetch tags:', error);
+    return [];
   }
 }
 
@@ -210,23 +210,23 @@ export async function getPopularTags(limit = 10) {
         },
       },
       take: limit,
-    })
+    });
 
-    return tags.filter((tag: any) => tag._count.posts > 0)
+    return tags.filter((tag: any) => tag._count.posts > 0);
   } catch (error) {
-    console.error('Failed to fetch popular tags:', error)
-    return []
+    console.error('Failed to fetch popular tags:', error);
+    return [];
   }
 }
 
 // 読了時間を計算
 export function calculateReadingTime(content: string) {
-  const stats = readingTime(content)
+  const stats = readingTime(content);
   return {
     text: stats.text,
     minutes: Math.ceil(stats.minutes),
     words: stats.words,
-  }
+  };
 }
 
 // コンテンツからexcerptを生成
@@ -241,18 +241,18 @@ export function generateExcerpt(content: string, maxLength = 160) {
     .replace(/!\[.*?\]\(.*?\)/g, '') // Images
     .replace(/>/g, '') // Blockquotes
     .replace(/\n+/g, ' ') // 改行をスペースに
-    .trim()
+    .trim();
 
-  if (plainText.length <= maxLength) return plainText
-  
+  if (plainText.length <= maxLength) return plainText;
+
   // 文の境界で切り取る
-  const sentences = plainText.split('。')
-  let excerpt = ''
-  
+  const sentences = plainText.split('。');
+  let excerpt = '';
+
   for (const sentence of sentences) {
-    if ((excerpt + sentence + '。').length > maxLength) break
-    excerpt += sentence + '。'
+    if ((excerpt + sentence + '。').length > maxLength) break;
+    excerpt += sentence + '。';
   }
-  
-  return excerpt || plainText.substring(0, maxLength) + '...'
-} 
+
+  return excerpt || plainText.substring(0, maxLength) + '...';
+}

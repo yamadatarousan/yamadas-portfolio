@@ -1,47 +1,47 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { title, slug, excerpt, content, tags = [], published } = body
+    const body = await request.json();
+    const { title, slug, excerpt, content, tags = [], published } = body;
 
     // 必須フィールドのバリデーション
     if (!title || !slug || !content) {
       return NextResponse.json(
         { error: 'タイトル、スラッグ、内容は必須です' },
         { status: 400 }
-      )
+      );
     }
 
     // スラッグの重複チェック
     const existingPost = await prisma.post.findUnique({
-      where: { slug }
-    })
+      where: { slug },
+    });
 
     if (existingPost) {
       return NextResponse.json(
         { error: 'このスラッグは既に使用されています' },
         { status: 400 }
-      )
+      );
     }
 
     // デフォルトユーザーを取得または作成（認証システムが実装されるまでの仮対応）
-    let defaultUser = await prisma.user.findFirst()
-    
+    let defaultUser = await prisma.user.findFirst();
+
     if (!defaultUser) {
       defaultUser = await prisma.user.create({
         data: {
           email: 'admin@example.com',
-          name: 'Administrator'
-        }
-      })
+          name: 'Administrator',
+        },
+      });
     }
 
     // タグを処理
-    const tagConnections = []
+    const tagConnections = [];
     for (const tagName of tags) {
       if (tagName.trim()) {
         // タグを取得または作成
@@ -50,12 +50,15 @@ export async function POST(request: NextRequest) {
           update: {},
           create: {
             name: tagName.trim(),
-            slug: tagName.trim().toLowerCase().replace(/[^a-z0-9]/g, '-')
-          }
-        })
+            slug: tagName
+              .trim()
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, '-'),
+          },
+        });
         tagConnections.push({
-          tagId: tag.id
-        })
+          tagId: tag.id,
+        });
       }
     }
 
@@ -70,57 +73,60 @@ export async function POST(request: NextRequest) {
         authorId: defaultUser.id,
         publishedAt: published ? new Date() : null,
         tags: {
-          create: tagConnections
-        }
+          create: tagConnections,
+        },
       },
       include: {
         tags: {
           include: {
-            tag: true
-          }
+            tag: true,
+          },
         },
         author: {
           select: {
             id: true,
             name: true,
-            email: true
-          }
-        }
-      }
-    })
+            email: true,
+          },
+        },
+      },
+    });
 
-    return NextResponse.json(post, { status: 201 })
+    return NextResponse.json(post, { status: 201 });
   } catch (error) {
-    console.error('Error creating post:', error)
+    console.error('Error creating post:', error);
     return NextResponse.json(
-      { error: '記事の作成に失敗しました', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: '記事の作成に失敗しました',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
-    )
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const published = searchParams.get('published')
-    const tag = searchParams.get('tag')
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const published = searchParams.get('published');
+    const tag = searchParams.get('tag');
 
-    const where: any = {}
-    
+    const where: any = {};
+
     if (published === 'true') {
-      where.published = true
+      where.published = true;
     } else if (published === 'false') {
-      where.published = false
+      where.published = false;
     }
 
     if (tag) {
       where.tags = {
         some: {
-          name: tag
-        }
-      }
+          name: tag,
+        },
+      };
     }
 
     const posts = await prisma.post.findMany({
@@ -128,25 +134,25 @@ export async function GET(request: NextRequest) {
       include: {
         tags: {
           include: {
-            tag: true
-          }
+            tag: true,
+          },
         },
         author: {
           select: {
             id: true,
             name: true,
-            email: true
-          }
-        }
+            email: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       skip: (page - 1) * limit,
-      take: limit
-    })
+      take: limit,
+    });
 
-    const total = await prisma.post.count({ where })
+    const total = await prisma.post.count({ where });
 
     return NextResponse.json({
       posts,
@@ -154,14 +160,14 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total,
-        pages: Math.ceil(total / limit)
-      }
-    })
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
-    console.error('Error fetching posts:', error)
+    console.error('Error fetching posts:', error);
     return NextResponse.json(
       { error: '記事の取得に失敗しました' },
       { status: 500 }
-    )
+    );
   }
-} 
+}
