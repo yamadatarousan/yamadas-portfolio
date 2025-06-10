@@ -1,32 +1,33 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
+import { ProjectCard } from '@/components/projects/project-card';
 import {
-  Calendar,
-  ExternalLink,
-  Github,
-  Star,
-  ArrowLeft,
-  Eye,
-} from 'lucide-react';
-import {
+  getGitHubRepoInfo,
   getProjectBySlug,
   getRelatedProjects,
-  getGitHubRepoInfo,
 } from '@/lib/projects';
-import { ProjectCard } from '@/components/projects/project-card';
+import {
+  ArrowLeft,
+  Calendar,
+  ExternalLink,
+  Eye,
+  Github,
+  Star,
+} from 'lucide-react';
+import { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const project = await getProjectBySlug(params.slug);
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     return {
@@ -47,7 +48,8 @@ export async function generateMetadata({
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
-  const project = await getProjectBySlug(params.slug);
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     notFound();

@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         tags: {
           include: {
@@ -45,15 +46,16 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { title, slug, excerpt, content, tags, published } = body;
 
     // 既存の記事を取得
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingPost) {
@@ -67,7 +69,7 @@ export async function PUT(
     const slugDuplicate = await prisma.post.findFirst({
       where: {
         slug,
-        NOT: { id: params.id },
+        NOT: { id },
       },
     });
 
@@ -80,7 +82,7 @@ export async function PUT(
 
     // 既存のタグ関連を削除
     await prisma.postTag.deleteMany({
-      where: { postId: params.id },
+      where: { postId: id },
     });
 
     // タグを処理
@@ -107,7 +109,7 @@ export async function PUT(
 
     // 記事を更新
     const post = await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         slug,
@@ -150,11 +152,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingPost) {
@@ -165,7 +168,7 @@ export async function DELETE(
     }
 
     await prisma.post.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: '記事が削除されました' });

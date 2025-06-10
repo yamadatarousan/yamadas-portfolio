@@ -12,4 +12,4 @@
   ],
   "typescript.preferences.removeUnusedImports": true,
   "typescript.suggest.autoImports": true
-} 
+}

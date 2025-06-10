@@ -10,7 +10,6 @@ async function main() {
     create: {
       email: 'admin@example.com',
       name: 'Admin User',
-      role: 'ADMIN',
     },
   });
 
@@ -53,7 +52,6 @@ async function main() {
       create: {
         name: 'Next.js',
         slug: 'nextjs',
-        description: 'Next.jsに関する記事',
       },
     }),
     prisma.tag.upsert({
@@ -62,7 +60,6 @@ async function main() {
       create: {
         name: 'React',
         slug: 'react',
-        description: 'Reactに関する記事',
       },
     }),
     prisma.tag.upsert({
@@ -71,7 +68,6 @@ async function main() {
       create: {
         name: 'TypeScript',
         slug: 'typescript',
-        description: 'TypeScriptに関する記事',
       },
     }),
     prisma.tag.upsert({
@@ -80,7 +76,6 @@ async function main() {
       create: {
         name: 'Prisma',
         slug: 'prisma',
-        description: 'Prismaに関する記事',
       },
     }),
   ]);
@@ -93,7 +88,6 @@ async function main() {
       create: {
         name: 'Next.js',
         slug: 'nextjs',
-        description: 'React フレームワーク',
         color: '#000000',
       },
     }),
@@ -103,7 +97,6 @@ async function main() {
       create: {
         name: 'React',
         slug: 'react',
-        description: 'JavaScript ライブラリ',
         color: '#61DAFB',
       },
     }),
@@ -113,7 +106,6 @@ async function main() {
       create: {
         name: 'TypeScript',
         slug: 'typescript',
-        description: 'JavaScript の型付きスーパーセット',
         color: '#3178C6',
       },
     }),
@@ -123,7 +115,6 @@ async function main() {
       create: {
         name: 'Tailwind CSS',
         slug: 'tailwindcss',
-        description: 'ユーティリティファーストの CSS フレームワーク',
         color: '#06B6D4',
       },
     }),
@@ -133,7 +124,6 @@ async function main() {
       create: {
         name: 'Prisma',
         slug: 'prisma',
-        description: 'Next-generation ORM',
         color: '#2D3748',
       },
     }),
@@ -143,7 +133,6 @@ async function main() {
       create: {
         name: 'PostgreSQL',
         slug: 'postgresql',
-        description: 'オープンソースリレーショナルデータベース',
         color: '#336791',
       },
     }),
@@ -153,7 +142,6 @@ async function main() {
       create: {
         name: 'Vercel',
         slug: 'vercel',
-        description: 'フロントエンドクラウドプラットフォーム',
         color: '#000000',
       },
     }),
@@ -183,30 +171,11 @@ async function main() {
 - 画像最適化
 - コード分割
 - SEO最適化`,
-        features: `レスポンシブデザイン
-ダークモード対応
-ブログ機能
-プロジェクト管理
-お問い合わせフォーム
-SEO最適化
-パフォーマンス最適化`,
-        challenges: `このプロジェクトでは、以下の技術的課題に取り組みました：
 
-**1. パフォーマンス最適化**
-Next.js App Routerの新しいキャッシュ戦略を活用し、ISRとSSGを適切に使い分けることで、高速なページ読み込みを実現しました。
-
-**2. 型安全性の確保**
-TypeScriptとPrismaを組み合わせることで、フロントエンドからデータベースまで一貫した型安全性を実現しました。
-
-**3. SEO対策**
-動的メタデータ生成、構造化データ、サイトマップ自動生成など、包括的なSEO対策を実装しました。`,
         githubUrl: 'https://github.com/yamada/portfolio',
         demoUrl: 'https://yamada-portfolio.vercel.app',
         featured: true,
         published: true,
-        status: 'COMPLETED',
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-02-15'),
       },
     }),
     prisma.project.upsert({
@@ -224,26 +193,11 @@ TypeScriptとPrismaを組み合わせることで、フロントエンドから�
 - **ドラッグ&ドロップ**: 直感的なタスク操作
 - **権限管理**: ロールベースのアクセス制御
 - **通知システム**: タスクの更新通知`,
-        features: `カンバンボード
-タスクの作成・編集・削除
-ドラッグ&ドロップ操作
-チームメンバー管理
-コメント機能
-ファイル添付
-期限管理
-通知機能`,
-        challenges: `**リアルタイム同期の実装**
-複数ユーザーが同時にタスクを操作する際の競合状態を適切に処理するため、楽観的ロックとWebSocketを組み合わせた仕組みを実装しました。
 
-**パフォーマンス最適化**
-大量のタスクデータを効率的に表示するため、仮想化とページネーションを組み合わせた表示方式を採用しました。`,
         githubUrl: 'https://github.com/yamada/task-manager',
         demoUrl: 'https://task-manager-demo.vercel.app',
         featured: true,
         published: true,
-        status: 'COMPLETED',
-        startDate: new Date('2023-10-01'),
-        endDate: new Date('2023-12-20'),
       },
     }),
     prisma.project.upsert({
@@ -261,20 +215,10 @@ TypeScriptとPrismaを組み合わせることで、フロントエンドから�
 - **API Gateway**: 統一されたAPI管理
 - **キャッシュ戦略**: Redis を使用した高速化
 - **セキュリティ**: JWT認証とOAuth2.0`,
-        features: `商品管理
-ショッピングカート
-決済処理（Stripe連携）
-注文管理
-在庫管理
-ユーザー管理
-レビューシステム
-検索・フィルタリング
-管理者ダッシュボード`,
+
         githubUrl: 'https://github.com/yamada/ecommerce',
         featured: false,
         published: true,
-        status: 'IN_PROGRESS',
-        startDate: new Date('2024-03-01'),
       },
     }),
   ]);
