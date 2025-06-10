@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ExternalLink, Github, Star, GitFork, Clock } from 'lucide-react'
 import { GitHubRepository } from '@/lib/github'
 

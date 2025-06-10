@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { Search, Filter, Code, Folder, Star, Github } from 'lucide-react'
+import Link from 'next/link'
+import { Github } from 'lucide-react'
 import { getProjects, getTechnologies, getProjectStats } from '@/lib/projects'
 import { getGitHubRepositories } from '@/lib/github'
 import { ProjectCard } from '@/components/projects/project-card'
@@ -33,13 +34,17 @@ async function ProjectStats() {
   ])
   
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">            
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
         <div className="flex items-center justify-center mb-2">
           <Github className="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </div>
         <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{repositories.length}</div>
         <div className="text-sm text-gray-600 dark:text-gray-400">リポジトリ</div>
+      </div>
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
+        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.published}</div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">公開プロジェクト</div>
       </div>
     </div>
   )
@@ -53,7 +58,7 @@ async function TechnologyFilter({ searchParams }: { searchParams: PageProps['sea
     <div className="mb-8">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">技術で絞り込み</h3>
       <div className="flex flex-wrap gap-2">
-        <a
+        <Link
           href="/projects"
           className={`px-3 py-1 rounded-full border text-sm transition-colors ${
             !selectedTech
@@ -62,9 +67,9 @@ async function TechnologyFilter({ searchParams }: { searchParams: PageProps['sea
           }`}
         >
           すべて
-        </a>
-        {technologies.map((tech: any) => (
-          <a
+        </Link>
+        {technologies.map((tech: { id: string; slug: string; name: string; color?: string }) => (
+          <Link
             key={tech.id}
             href={`/projects?tech=${tech.slug}`}
             className={`px-3 py-1 rounded-full border text-sm transition-colors ${
@@ -78,7 +83,7 @@ async function TechnologyFilter({ searchParams }: { searchParams: PageProps['sea
             }}
           >
             {tech.name}
-          </a>
+          </Link>
         ))}
       </div>
     </div>
@@ -139,7 +144,7 @@ async function ProjectGrid({ searchParams }: { searchParams: PageProps['searchPa
             ✨ 注目プロジェクト
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {projects.map((project: any) => (
+            {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
@@ -216,12 +221,12 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                 注目プロジェクトのみ
               </span>
             )}
-            <a
+            <Link
               href="/projects"
               className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
             >
               フィルターをクリア
-            </a>
+            </Link>
           </div>
         )}
 

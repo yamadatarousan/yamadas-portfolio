@@ -1,23 +1,13 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { 
-  PlusCircle, 
-  FileText, 
-  Users, 
-  BarChart3, 
-  Settings,
-  Calendar,
-  Eye,
-  Edit
-} from 'lucide-react'
-import { getPosts } from '@/lib/blog'
-import { getProjectStats } from '@/lib/projects'
+
 
 export const metadata: Metadata = {
   title: '管理者ダッシュボード | My Portfolio',
   description: 'ブログとプロジェクトの管理画面',
 }
 
+/*
 async function DashboardStats() {
   const [posts, projectStats] = await Promise.all([
     getPosts({ published: false, limit: 100 }),
@@ -114,7 +104,7 @@ async function RecentPosts() {
       </div>
       
       <div className="space-y-4">
-        {posts.map((post: any) => (
+        {posts.map((post) => (
           <div key={post.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
             <div className="flex-1">
               <h3 className="font-medium text-slate-900 dark:text-slate-100">
@@ -154,6 +144,7 @@ async function RecentPosts() {
     </div>
   )
 }
+*/
 
 export default function AdminDashboard() {
   return (

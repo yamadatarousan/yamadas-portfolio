@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { useTheme } from 'next-themes'
+
 
 interface MarkdownContentProps {
   content: string
@@ -12,7 +10,6 @@ interface MarkdownContentProps {
 }
 
 export function MarkdownContent({ content, className = '' }: MarkdownContentProps) {
-  const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -27,29 +24,10 @@ export function MarkdownContent({ content, className = '' }: MarkdownContentProp
     )
   }
 
-  return (
+    return (
     <div className={`prose prose-slate dark:prose-invert max-w-none prose-lg ${className}`}>
       <ReactMarkdown
         components={{
-          code({ node, inline, className, children, ...props }: any) {
-            const match = /language-(\w+)/.exec(className || '')
-            const language = match ? match[1] : ''
-            
-            return !inline && language ? (
-              <SyntaxHighlighter
-                style={theme === 'dark' ? vscDarkPlus : vs}
-                language={language}
-                PreTag="div"
-                {...props}
-              >
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            ) : (
-              <code className={className} {...props}>
-                {children}
-              </code>
-            )
-          },
           h1: ({ children }) => (
             <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mt-8 mb-4 first:mt-0">
               {children}
@@ -104,11 +82,11 @@ export function MarkdownContent({ content, className = '' }: MarkdownContentProp
           ),
           img: ({ src, alt }) => (
             <div className="my-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={src}
+                src={src || ''}
                 alt={alt || ''}
                 className="w-full h-auto rounded-lg shadow-lg"
-                loading="lazy"
               />
               {alt && (
                 <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-2 italic">

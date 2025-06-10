@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Star, Github } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 import { getFeaturedProjects } from '@/lib/projects'
 import { getGitHubRepositories } from '@/lib/github'
 import { ProjectCard } from './project-card'
@@ -43,7 +43,7 @@ export async function FeaturedProjects() {
 
         {/* プロジェクトグリッド */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {featuredProjects.map((project: any) => (
+          {featuredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
           {popularRepo && (

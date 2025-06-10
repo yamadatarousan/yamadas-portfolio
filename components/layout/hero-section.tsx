@@ -1,7 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { GitHub, LinkedIn, Twitter, Mail, Download, ExternalLink } from '@/components/ui/icons'
+import { GitHub } from '@/components/ui/icons'
 import { ArrowRight, Code, User } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
