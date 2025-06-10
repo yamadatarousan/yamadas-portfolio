@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom';
 
 // Mock for next/navigation
 jest.mock('next/navigation', () => ({
@@ -12,29 +12,29 @@ jest.mock('next/navigation', () => ({
   })),
   usePathname: jest.fn(() => '/'),
   useSearchParams: jest.fn(() => new URLSearchParams()),
-}))
+}));
 
 // Mock for next/image
 jest.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt, ...props }) => {
-    return <img src={src} alt={alt} {...props} />
+    return <img src={src} alt={alt} {...props} />;
   },
-}))
+}));
 
 // Global test utilities
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -49,4 +49,4 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-}) 
+});
