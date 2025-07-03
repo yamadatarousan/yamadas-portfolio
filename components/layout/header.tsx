@@ -8,8 +8,9 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'ホーム', href: '/' },
-    { name: 'プロジェクト', href: '/projects' },
+    { name: 'Home', href: '/' },
+    { name: 'Projects', href: '/projects' },
+    { name: 'Tech Trends', href: '/trends' },
   ];
 
   return (

@@ -3,10 +3,10 @@
 このプロジェクトは、フルスタック開発者のポートフォリオサイトです。現在、GitHubの技術トレンド可視化機能を追加開発中です。
 
 ## プロジェクト概要
-- **技術スタック**: Next.js 15, TypeScript, Tailwind CSS, Prisma, SQLite
+- **技術スタック**: Next.js 15, TypeScript, Tailwind CSS, Prisma, PostgreSQL
 - **認証**: NextAuth.js
 - **デプロイ**: Vercel
-- **データベース**: Prisma + SQLite (開発), Neon (本番)
+- **データベース**: Prisma + PostgreSQL
 
 ## 開発する機能: GitHub Tech Trends
 過去30日間に作成された人気GitHubリポジトリの技術スタック分析と可視化
@@ -59,7 +59,7 @@ npm run db:migrate
 ## 環境変数
 ```
 GITHUB_TOKEN=ghp_xxx  # GitHub Personal Access Token
-DATABASE_URL=file:./dev.db  # 開発用SQLite
+DATABASE_URL=postgresql://xxx  # PostgreSQL接続文字列
 NEXTAUTH_SECRET=xxx
 NEXTAUTH_URL=http://localhost:3000
 ```
